@@ -4,17 +4,15 @@
   "dependencies": [
     {
       "type": "Project",
-      "cfg": "api",
-      "path": ":k:lang"
-    },  {
-      "type": "Project",
       "cfg": "implementation",
       "path": ":k:prim"
-    },{
-      "type": "Project",
-      "cfg": "implementation",
-      "path": ":k:json"
-    },  {
+    },
+    {
+      "type": "Lib",
+      "cfg": "api",
+      "key": "kotlinx-serialization-json"
+    },
+    {
       "type": "Lib",
       "cfg": "implementation",
       "key": "xmlutil-serialization"
