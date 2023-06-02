@@ -115,6 +115,17 @@ value class SubjectID(val id: String) {
     }
 }
 
+val Int.inches get() = Inches(this)
+
+@Serializable
+@JvmInline
+value class Inches(val inches: Int)
+
+val Int.libs get() = Pounds(this)
+
+@Serializable
+@JvmInline
+value class Pounds(val lbs: Int)
 
 @Serializable
 @XmlSerialName("subjectPersistentInfo", NAMESPACE_MAIN, "")

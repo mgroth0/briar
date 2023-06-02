@@ -1,41 +1,46 @@
 package matt.briar.meta.extract
 
-import matt.briar.meta.SubjectID
 import kotlinx.serialization.Serializable
+import matt.briar.meta.Inches
+import matt.briar.meta.Pounds
+import matt.briar.meta.Sex
+import matt.briar.meta.SubjectID
 
 @Serializable
 class ExtractedMetaData(
-    val videoMetadataFiles: List<String>
-)
-
-
-@Serializable
-class AllExtractedMetaData(
-    val videos: List<AllVidMetadata>
+    val videos: List<ExtractedVideoMetaData>
 )
 
 @Serializable
-class AllVidMetadata(
-    val file: String,
-    val metadata: ExtractedVidMetaData
+class ExtractedVideoMetaData(
+    val framesMetaDataFile: String,
+    val subject: ExtractedSubject
 )
 
 @Serializable
-class ExtractedVidMetaData(
-    val subject: SubjectID,
+class ExtractedFramesMetaData(
     val frames: List<ExtractedFrameMetaData>
+)
+
+@Serializable
+class ExtractedSubject(
+    val id: SubjectID,
+    val sex: Sex,
+    val height: Inches,
+    val weight: Pounds
 )
 
 @Serializable
 class ExtractedFrameMetaData(
     val index: Int,
-    val body: BoundingBox?,
-    val face: BoundingBox?,
+    val body: Box?,
+    val face: Box?,
     val faceOrientation: Orientation,
+    val crop: Box?
 )
 
 @Serializable
-class BoundingBox(
+class Box(
     val x: Int,
     val y: Int,
     val width: Int,
