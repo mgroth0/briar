@@ -8,11 +8,15 @@
       "path": ":k:prim"
     },
     {
+      "type": "Project",
+      "cfg": "implementation",
+      "path": ":k:lang"
+    },
+    {
       "type": "Lib",
       "cfg": "api",
       "key": "kotlinx-serialization-json"
     },
-
     {
       "type": "Lib",
       "cfg": "implementation",

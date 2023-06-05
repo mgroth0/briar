@@ -1,10 +1,8 @@
 package matt.briar.meta.extract
 
 import kotlinx.serialization.Serializable
-import matt.briar.meta.Inches
-import matt.briar.meta.Pounds
-import matt.briar.meta.Sex
-import matt.briar.meta.SubjectID
+import matt.briar.meta.MediaAnnotation
+import matt.prim.str.prependZeros
 
 @Serializable
 class ExtractedMetaData(
@@ -14,7 +12,7 @@ class ExtractedMetaData(
 @Serializable
 class ExtractedVideoMetaData(
     val framesMetaDataFile: String,
-    val subject: ExtractedSubject
+    val metadata: MediaAnnotation
 )
 
 @Serializable
@@ -22,22 +20,72 @@ class ExtractedFramesMetaData(
     val frames: List<ExtractedFrameMetaData>
 )
 
-@Serializable
-class ExtractedSubject(
-    val id: SubjectID,
-    val sex: Sex,
-    val height: Inches,
-    val weight: Pounds
-)
 
 @Serializable
 class ExtractedFrameMetaData(
     val index: Int,
-    val body: Box?,
-    val face: Box?,
+    val body: Box,
+    val face: Box,
     val faceOrientation: Orientation,
-    val crop: Box?
+    var crop: Box?
 )
+
+data class ProcessedFrameMetadata(
+    val orientation: BinnedOrientation?,
+    val vid: MediaAnnotation
+)
+
+@Serializable
+data class BinnedOrientation(
+    private val yawBin: YawBin,
+    private val pitchBin: PitchBin
+) : Comparable<BinnedOrientation> {
+    companion object {
+        private val comparator = compareBy<BinnedOrientation> { it.yawBin }.thenBy { it.pitchBin }
+    }
+
+    override fun toString() = "$yawBin$pitchBin"
+    override fun compareTo(other: BinnedOrientation): Int {
+        return comparator.compare(this, other)
+    }
+}
+
+private const val ORIENTATION_BIN_NUM_DIGITS = 2
+
+@JvmInline
+@Serializable
+value class YawBin(private val angle: Int) : Comparable<YawBin> {
+    private val num get() = angle.prependZeros(ORIENTATION_BIN_NUM_DIGITS)
+    override fun toString(): String {
+        return when {
+            angle == 0 -> "C$num"
+            angle > 0  -> "R$num"
+            else       -> "L$num"
+        }
+    }
+
+    override fun compareTo(other: YawBin): Int {
+        return angle.compareTo(other.angle)
+    }
+}
+
+@JvmInline
+@Serializable
+value class PitchBin(private val angle: Int) : Comparable<PitchBin> {
+    private val num get() = angle.prependZeros(ORIENTATION_BIN_NUM_DIGITS)
+    override fun toString(): String {
+        return when {
+            angle == 0 -> "C$num"
+            angle > 0  -> "U$num"
+            else       -> "D$num"
+        }
+    }
+
+    override fun compareTo(other: PitchBin): Int {
+        return angle.compareTo(other.angle)
+    }
+}
+
 
 @Serializable
 class Box(

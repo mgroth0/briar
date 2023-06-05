@@ -22,7 +22,7 @@ private const val PREFIX_MEDIA = "media"
 
 @Serializable
 @XmlSerialName("mediaAnnotation", NAMESPACE_MEDIA, PREFIX_MEDIA)
-class MediaAnnotation(
+data class MediaAnnotation(
     @XmlElement(true) val description: String? = null,
     @XmlElement(true) val mediaInfo: MediaInfo,
     @XmlElement(true) val modality: Modality,
@@ -95,7 +95,19 @@ data class Resolution(
         PREFIX_FSTD
     )
     @XmlElement(true) val height: Int
-)
+) : Comparable<Resolution> {
+    override fun toString(): String {
+        return "${width}x$height"
+    }
+
+    override fun compareTo(other: Resolution): Int {
+        return if (width != other.width) {
+            width.compareTo(other.width)
+        } else {
+            height.compareTo(other.height)
+        }
+    }
+}
 
 @Serializable
 @XmlSerialName("subject", NAMESPACE_MAIN, "")
@@ -109,10 +121,12 @@ data class Subject(
 @Serializable
 @JvmInline
 @XmlSerialName("id", NAMESPACE_MAIN, "")
-value class SubjectID(val id: String) {
+value class SubjectID(val id: String) : Comparable<SubjectID> {
     override fun toString(): String {
         return id
     }
+
+    override fun compareTo(other: SubjectID) = id.compareTo(other.id)
 }
 
 val Int.inches get() = Inches(this)
@@ -162,10 +176,16 @@ enum class Ethnicity {
 @XmlSerialName("subjectImageSpecificInfo", NAMESPACE_MAIN, "")
 data class SubjectImageSpecificInfo(
     @XmlElement(true) val attire: Attire,
+
+    /*whether these empty objects are present or not seems to not mean anything*/
     val facemask: Facemask? = null,
+    /*whether these empty objects are present or not seems to not mean anything*/
     val glasses: Glasses? = null,
+    /*whether these empty objects are present or not seems to not mean anything*/
     val moustache: Moustache? = null,
+    /*whether these empty objects are present or not seems to not mean anything*/
     val beard: Beard? = null,
+    /*whether these empty objects are present or not seems to not mean anything*/
     val headCovering: HeadCovering? = null
 )
 
@@ -225,10 +245,16 @@ data class SensorInfo(
     @XmlElement(true) val type: SensorType,
     @XmlElement(true) val model: String,
     @XmlElement(true) val manufacturer: String,
-    @XmlElement(true) val captureSpectrum: String,
+    @XmlElement(true) val captureSpectrum: Spectrum,
     @XmlElement(true) val focalLength: FocalLength,
     @XmlElement(true) val sensorInfoFile: String? = null,
 )
+
+@Serializable
+@XmlSerialName("captureSpectrum", NAMESPACE_MAIN, "")
+enum class Spectrum {
+    visible
+}
 
 @Serializable
 @XmlSerialName("type", NAMESPACE_MAIN, "")
@@ -238,7 +264,7 @@ enum class SensorType {
 
 @Serializable
 @XmlSerialName("focalLength", NAMESPACE_MAIN, "")
-class FocalLength(
+data class FocalLength(
     @XmlSerialName(
         "MinLength",
         NAMESPACE_VSTD,
@@ -251,7 +277,19 @@ class FocalLength(
         PREFIX_VSTD
     )
     @XmlElement(true) val MaxLength: Double
-)
+) : Comparable<FocalLength> {
+    companion object {
+        private val COMPARATOR = compareBy<FocalLength> { it.MinLength }.thenBy { it.MaxLength }
+    }
+
+    override fun compareTo(other: FocalLength): Int {
+        return COMPARATOR.compare(this, other)
+    }
+
+    override fun toString(): String {
+        return "$MinLength-$MaxLength"
+    }
+}
 
 ///*A primitive written as TEXT will be text content only, but nate that there are only few cases where this is valid.*/
 //@SeeURL("https://github.com/pdvrieze/xmlutil")
@@ -342,9 +380,9 @@ class AtmosphericCondition(
     @Serializable(with = NullableDoubleSerializer::class)
     @XmlElement(true) val temperature: Double? = null,
     @Serializable(with = NullableIntSerializer::class)
-    @XmlElement(true) private val windChill: Int? = null,
+    @XmlElement(true) val windChill: Int? = null,
     @Serializable(with = NullableIntSerializer::class)
-    @XmlElement(true) private val heatIndex: Int? = null,
+    @XmlElement(true) val heatIndex: Int? = null,
     @Serializable(with = NullableDoubleSerializer::class)
     @XmlElement(true) val dewPoint: Double? = null,
     @Serializable(with = NullableDoubleSerializer::class)
@@ -369,13 +407,13 @@ value class CN2(val raw: String)
 
 @Serializable
 @XmlSerialName("detailedAnnotation", NAMESPACE_MEDIA, PREFIX_MEDIA)
-class DetailedAnnotation(
+data class DetailedAnnotation(
     val completeAnnotation: CompleteAnnotation
 )
 
 @Serializable
 @XmlSerialName("completeAnnotation", NAMESPACE_MEDIA, PREFIX_MEDIA)
-class CompleteAnnotation(
+data class CompleteAnnotation(
     val description: AnnotationDescription,
     val track: Track
 )
@@ -389,7 +427,7 @@ enum class AnnotationDescription {
 
 @Serializable
 @XmlSerialName("Track", NAMESPACE_VSTD, PREFIX_VSTD)
-class Track(
+data class Track(
     @XmlSerialName(
         "TrackBegin",
         NAMESPACE_VSTD,
