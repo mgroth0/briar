@@ -11,7 +11,8 @@ class ExtractedMetaData(
 
 @Serializable
 class ExtractedVideoMetaData(
-    val framesMetaDataFile: String,
+    val vidFile: String,
+    val framesMetaDataFile: String?,
     val metadata: MediaAnnotation
 )
 
@@ -23,6 +24,22 @@ class ExtractedFramesMetaData(
 
 @Serializable
 class ExtractedFrameMetaData(
+    val index: Int,
+    val body: Box?,
+    val face: Box?,
+    val faceOrientation: Orientation?,
+    var crop: Box?
+) {
+    fun requireHasBothBoundingBoxes() = ExtractedFrameMetaDataWithBothBoundingBoxes(
+        index = index,
+        body = body!!,
+        face = face!!,
+        faceOrientation = faceOrientation!!,
+        crop = crop
+    )
+}
+
+class ExtractedFrameMetaDataWithBothBoundingBoxes(
     val index: Int,
     val body: Box,
     val face: Box,

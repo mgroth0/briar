@@ -7,7 +7,6 @@ import kotlinx.serialization.descriptors.nullable
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.serializer
-import matt.prim.str.elementsToString
 import nl.adaptivity.xmlutil.serialization.XmlElement
 import nl.adaptivity.xmlutil.serialization.XmlSerialName
 
@@ -31,7 +30,17 @@ data class MediaAnnotation(
     val sensorToSubjectInfo: SensorToSubjectInfo,
     val environment: Environment,
     val detailedAnnotation: DetailedAnnotation
-)
+) {
+    fun withoutTrack() = copy(
+        detailedAnnotation = detailedAnnotation.copy(
+            completeAnnotation = detailedAnnotation.completeAnnotation.copy(
+                track = detailedAnnotation.completeAnnotation.track.copy(frameAnnotations = listOf())
+            )
+        )
+    )
+
+    fun hasTrack() = detailedAnnotation.completeAnnotation.track.frameAnnotations.isNotEmpty()
+}
 
 @Serializable
 @XmlSerialName("modality", NAMESPACE_MAIN, "")
@@ -530,18 +539,18 @@ class FrameAnnotation(
     }
 
     val bodyAnnotation by lazy {
-        objectAnnotations.firstOrNull { it.modality == matt.briar.meta.BiometricModality.BODY } ?: error(
+        objectAnnotations.firstOrNull { it.modality == BiometricModality.BODY } /*?: error(
             "no body modality. Only modalities are: ${
                 objectAnnotations.map { it.modality }.elementsToString()
             }"
-        )
+        )*/
     }
     val faceAnnotation by lazy {
-        objectAnnotations.firstOrNull { it.modality == matt.briar.meta.BiometricModality.FACE } ?: error(
+        objectAnnotations.firstOrNull { it.modality == BiometricModality.FACE } /*?: error(
             "no face modality. Only modalities are: ${
                 objectAnnotations.map { it.modality }.elementsToString()
             }"
-        )
+        )*/
     }
 
     val numModalitiesDetected get() = objectAnnotations.map { it.modality }.toSet().size
