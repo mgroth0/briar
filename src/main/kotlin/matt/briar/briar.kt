@@ -15,8 +15,8 @@ import matt.file.MFile
 import matt.file.context.ComputeContext
 import matt.file.context.ComputeContextFiles
 
-val QUERY_DIST = 100
-val GALLERY_DIST = 10
+const val QUERY_DIST = 100
+const val GALLERY_DIST = 10
 
 @Serializable
 sealed interface BriarExtraction {
@@ -81,8 +81,9 @@ class OnlineExpExtraction(override val computeContext: ComputeContext) : BriarEx
         frames: List<ExtractedFrameMetaData>,
     ) = video.baseFrameFilter(frames)
         .filter {
-            OrientationBinner.bin(
-                yaw = it.faceOrientation!!.yaw,
+            it.faceOrientation!!.confident
+                    && OrientationBinner.bin(
+                yaw = it.faceOrientation.yaw,
                 pitch = it.faceOrientation.pitch
             ) == targetOrientation
         }
@@ -118,3 +119,8 @@ class TrialConfiguration(
 interface StimuliSelectionContext {
     val distractorImagesNeeded: Map<SubjectID, Int>
 }
+
+
+
+
+

@@ -115,6 +115,7 @@ class Box(
 @Serializable
 data class Orientation(
     val yaw: Double,
-    val pitch: Double
+    val pitch: Double,
+    var confident: Boolean = true
 )
 

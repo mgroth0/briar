@@ -5,11 +5,6 @@
     {
       "type": "Project",
       "cfg": "implementation",
-      "path": ":k:prim"
-    },
-    {
-      "type": "Project",
-      "cfg": "implementation",
       "path": ":k:file"
     },
     {
