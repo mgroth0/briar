@@ -54,8 +54,8 @@ data class ProcessedFrameMetadata(
 
 @Serializable
 data class BinnedOrientation(
-    private val yawBin: YawBin,
-    private val pitchBin: PitchBin
+    val yawBin: YawBin,
+    val pitchBin: PitchBin
 ) : Comparable<BinnedOrientation> {
     companion object {
         private val comparator = compareBy<BinnedOrientation> { it.yawBin }.thenBy { it.pitchBin }
@@ -71,7 +71,7 @@ private const val ORIENTATION_BIN_NUM_DIGITS = 2
 
 @JvmInline
 @Serializable
-value class YawBin(private val angle: Int) : Comparable<YawBin> {
+value class YawBin(val angle: Int) : Comparable<YawBin> {
     private val num get() = angle.prependZeros(ORIENTATION_BIN_NUM_DIGITS)
     override fun toString(): String {
         return when {
@@ -88,7 +88,7 @@ value class YawBin(private val angle: Int) : Comparable<YawBin> {
 
 @JvmInline
 @Serializable
-value class PitchBin(private val angle: Int) : Comparable<PitchBin> {
+value class PitchBin( val angle: Int) : Comparable<PitchBin> {
     private val num get() = angle.prependZeros(ORIENTATION_BIN_NUM_DIGITS)
     override fun toString(): String {
         return when {

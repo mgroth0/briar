@@ -40,6 +40,9 @@ data class MediaAnnotation(
     )
 
     fun hasTrack() = detailedAnnotation.completeAnnotation.track.frameAnnotations.isNotEmpty()
+
+    val clothingSet get() = subject.subjectImageSpecificInfo.attire.clothingSet
+    val subjectID get() = subject.id
 }
 
 @Serializable

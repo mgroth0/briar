@@ -39,9 +39,10 @@ private fun MediaAnnotation.baseVideoFilter() =
             && modality == wholeBody
 
 private fun MediaAnnotation.baseFrameFilter(frames: List<ExtractedFrameMetaData>) =
-    frames.asSequence().filter {
-        it.body != null && it.face != null && it.faceOrientation != null
-    }
+    if (frames.size <= mediaInfo.videoFrameRate_fps) sequenceOf() else
+        frames.asSequence().filter {
+            it.body != null && it.face != null && it.faceOrientation != null
+        }
 
 @Serializable
 class DNNExtraction(override val computeContext: ComputeContext) : BriarExtraction {
@@ -61,12 +62,14 @@ class DNNExtraction(override val computeContext: ComputeContext) : BriarExtracti
     /*.take(1000)*/ /*take only first 1000 while I deal with http://ffmpeg.org/pipermail/ffmpeg-user/2023-June/056456.html*/
 }
 
+ val TARGET_ORIENTATION = BinnedOrientation(YawBin(0), PitchBin(0))
+
 @Serializable
 class OnlineExpExtraction(override val computeContext: ComputeContext) : BriarExtraction {
     override val extractName = "BRS1_extract_for_oexp"
 
     private val distancesToUse = listOf(GALLERY_DIST, QUERY_DIST)
-    private val targetOrientation = BinnedOrientation(YawBin(0), PitchBin(0))
+    private val targetOrientation = TARGET_ORIENTATION
 
     override fun shouldInclude(
         video: MediaAnnotation,
@@ -74,7 +77,9 @@ class OnlineExpExtraction(override val computeContext: ComputeContext) : BriarEx
     ) = video.baseVideoFilter()
             && video.sensorToSubjectInfo.sensorToSubjectDistance_meters in distancesToUse
             && video.subject.id.id in similarityMatrix!!.ids
-            && video.sensorInfo.model == "Q6215-LE" /*there are only two options for 100, and the other one seems to always be tilted*/
+
+    /*removing the camera filter for now, because I'm having trouble finding the frames I need*/
+    /*&& video.sensorInfo.model == "Q6215-LE"*/ /*there are only two options for 100, and the other one seems to always be tilted*/
 
     override fun framesToExtract(
         video: MediaAnnotation,
