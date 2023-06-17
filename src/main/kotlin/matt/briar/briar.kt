@@ -44,6 +44,11 @@ private fun MediaAnnotation.baseFrameFilter(frames: List<ExtractedFrameMetaData>
             it.body != null && it.face != null && it.faceOrientation != null
         }
 
+fun allExtractions(computeContext: ComputeContext) = listOf(
+    DNNExtraction(computeContext),
+    OnlineExpExtraction(computeContext)
+)
+
 @Serializable
 class DNNExtraction(override val computeContext: ComputeContext) : BriarExtraction {
     override val extractName = "BRS1_extract"
@@ -62,7 +67,7 @@ class DNNExtraction(override val computeContext: ComputeContext) : BriarExtracti
     /*.take(1000)*/ /*take only first 1000 while I deal with http://ffmpeg.org/pipermail/ffmpeg-user/2023-June/056456.html*/
 }
 
- val TARGET_ORIENTATION = BinnedOrientation(YawBin(0), PitchBin(0))
+val TARGET_ORIENTATION = BinnedOrientation(YawBin(0), PitchBin(0))
 
 @Serializable
 class OnlineExpExtraction(override val computeContext: ComputeContext) : BriarExtraction {
