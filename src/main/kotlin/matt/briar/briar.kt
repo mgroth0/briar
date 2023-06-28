@@ -6,14 +6,14 @@ import matt.briar.meta.MediaAnnotation
 import matt.briar.meta.Modality.wholeBody
 import matt.briar.meta.SensorType.surveillance
 import matt.briar.meta.SubjectID
-import matt.briar.meta.extract.BinnedOrientation
 import matt.briar.meta.extract.ExtractedFrameMetaData
-import matt.briar.meta.extract.PitchBin
-import matt.briar.meta.extract.YawBin
 import matt.briar.orientation.OrientationBinner
 import matt.file.MFile
 import matt.file.context.ComputeContext
 import matt.file.context.ComputeContextFiles
+import matt.model.data.orientation.BinnedOrientation
+import matt.model.data.orientation.PitchBin
+import matt.model.data.orientation.YawBin
 
 const val QUERY_DIST = 100
 const val GALLERY_DIST = 10

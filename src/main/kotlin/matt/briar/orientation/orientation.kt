@@ -1,8 +1,9 @@
 package matt.briar.orientation
 
-import matt.briar.meta.extract.BinnedOrientation
-import matt.briar.meta.extract.PitchBin
-import matt.briar.meta.extract.YawBin
+import matt.model.data.orientation.BinnedOrientation
+import matt.model.data.orientation.PitchBin
+import matt.model.data.orientation.YawBin
+
 
 object OrientationBinner {
     const val YAW_RADIUS = 2.0
