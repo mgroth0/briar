@@ -7,6 +7,8 @@ import kotlinx.serialization.descriptors.nullable
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.serializer
+import matt.lang.require.requireEquals
+import matt.lang.require.requireIn
 import nl.adaptivity.xmlutil.serialization.XmlElement
 import nl.adaptivity.xmlutil.serialization.XmlSerialName
 
@@ -364,7 +366,10 @@ class NullableIntSerializer : KSerializer<Int?> {
         return decoder.decodeString().takeIf { it.isNotEmpty() }?.toInt()
     }
 
-    override fun serialize(encoder: Encoder, value: Int?) {
+    override fun serialize(
+        encoder: Encoder,
+        value: Int?
+    ) {
         encoder.encodeString(value?.toString() ?: "")
     }
 
@@ -378,7 +383,10 @@ class NullableDoubleSerializer : KSerializer<Double?> {
         return decoder.decodeString().takeIf { it.isNotEmpty() }?.toDouble()
     }
 
-    override fun serialize(encoder: Encoder, value: Double?) {
+    override fun serialize(
+        encoder: Encoder,
+        value: Double?
+    ) {
         encoder.encodeString(value?.toString() ?: "")
     }
 
@@ -537,8 +545,8 @@ class FrameAnnotation(
     val objectAnnotations: List<ObjectAnnotation>
 ) {
     init {
-        require(objectAnnotations.size == numDetections)
-        require(numDetections in 0..2)
+        requireEquals(objectAnnotations.size, numDetections)
+        requireIn(numDetections, 0..2)
     }
 
     val bodyAnnotation by lazy {

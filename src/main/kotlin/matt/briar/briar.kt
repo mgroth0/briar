@@ -11,6 +11,8 @@ import matt.briar.orientation.OrientationBinner
 import matt.file.MFile
 import matt.file.context.ComputeContext
 import matt.file.context.ComputeContextFiles
+import matt.lang.require.requireEquals
+import matt.lang.require.requireNull
 import matt.model.data.orientation.BinnedOrientation
 import matt.model.data.orientation.PitchBin
 import matt.model.data.orientation.YawBin
@@ -26,7 +28,11 @@ sealed interface BriarExtraction {
     val briarExtractDataFolder get() = briarExtractFolder["data"]
     val briarExtractMetadataFile get() = briarExtractFolder[ComputeContextFiles.BRIAR_EXTRACT_METADATA_FILE_NAME]
     val cacheFolder get() = computeContext.files.cacheFolder["briar_extracts"][extractName]
-    fun shouldInclude(video: MediaAnnotation, similarityMatrix: SimilarityMatrix?): Boolean
+    fun shouldInclude(
+        video: MediaAnnotation,
+        similarityMatrix: SimilarityMatrix?
+    ): Boolean
+
     fun framesToExtract(
         video: MediaAnnotation,
         frames: List<ExtractedFrameMetaData>,
@@ -53,8 +59,11 @@ fun allExtractions(computeContext: ComputeContext) = listOf(
 class DNNExtraction(override val computeContext: ComputeContext) : BriarExtraction {
     override val extractName = "BRS1_extract"
 
-    override fun shouldInclude(video: MediaAnnotation, similarityMatrix: SimilarityMatrix?): Boolean {
-        require(similarityMatrix == null)
+    override fun shouldInclude(
+        video: MediaAnnotation,
+        similarityMatrix: SimilarityMatrix?
+    ): Boolean {
+        requireNull(similarityMatrix)
         return video.baseVideoFilter()
     }
 
@@ -107,9 +116,9 @@ class SimilarityMatrix(
     val sets: List<String> /*Clothing sets. I think this doesn't matter since he only checked faces*/
 ) {
     init {
-        require(ids.size == 157)
-        require(corrmat.size == 157)
-        require(sets.size == 157)
+        requireEquals(ids.size, 157)
+        requireEquals(corrmat.size, 157)
+        requireEquals(sets.size, 157)
     }
 }
 
@@ -119,7 +128,7 @@ class TrialConfiguration(
     val distractors: List<SubjectID>
 ) {
     init {
-        require(distractors.size == 4) {
+        requireEquals(distractors.size, 4) {
             "there should be 4 distractors, not ${distractors.size}"
         }
     }
