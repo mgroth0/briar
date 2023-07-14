@@ -43,6 +43,7 @@ private fun MediaAnnotation.baseVideoFilter() =
     mediaInfo.colorSpace != grayscale
             && sensorInfo.type == surveillance
             && modality == wholeBody
+            && (sensorToSubjectInfo.sensorElevation?.let { it < 2.0 } ?: false) /*so image_viewer task is no ambiguous*/
 
 private fun MediaAnnotation.baseFrameFilter(frames: List<ExtractedFrameMetaData>) =
     if (frames.size <= mediaInfo.videoFrameRate_fps) sequenceOf() else
